@@ -82,7 +82,7 @@ model Video {
   title        String
   description  String
   videoUrl     String
-  videoId      String
+  videoId      String    @unique
   thumbnailUrl String
   visibility   Visibility
   transcript   Json?

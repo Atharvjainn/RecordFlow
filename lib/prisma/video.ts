@@ -22,7 +22,8 @@ export const getVideosByid = async (userId : string) => {
         })
         return videos;
     } catch (error) {
-        console.log("something went wrong in the server");
+        console.error("Prisma fetch video error:", error);
+        throw error
     }
 }
 
@@ -38,6 +39,22 @@ export const getVideoByid = async (videoId : string) => {
         if(!video) throw new Error("cannot find this video")
         return video
     } catch (error) {
-        console.log("something went wrong in the server");
+        console.error("Prisma fetch video error:", error);
+        throw error
+    }
+}
+
+
+export const deleteVideoById = async(publicId : string) => {
+    try {
+       const response = await prisma.video.delete({
+        where : {
+            videoId : publicId,
+        }
+       })  
+       return response;
+    } catch (error) {
+        console.error("Prisma delete video error:", error);
+        throw error
     }
 }

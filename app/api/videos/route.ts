@@ -43,7 +43,7 @@ export async function POST(req : Request){
         return Response.json({success : true})
 
     } catch (error) {
-        console.error("Temp-video error:", error);
+        console.error("Error in uploading the video", error);
         return new Response("Internal server error", { status: 500 });   
     }
 }

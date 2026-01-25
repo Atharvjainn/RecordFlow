@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { Video } from '@/lib/types'
 import { useAuthStore } from '@/store/useAuthStore'
+import { deleteVideo } from '@/lib/cloudinary/delete-client'
+import { useRouter } from 'next/navigation'
 
 const TABS = ['Transcript', 'Metadata', 'Viewers', 'Chapters'] as const
 
@@ -21,6 +23,12 @@ const VideoPage = ({ video, videoUrl }: VideoPageProps) => {
     useState<'Public' | 'Private'>('Public')
 
   const [showVisibility, setShowVisibility] = useState(false)
+  const router = useRouter()
+
+  const deletevideo = () => {
+    deleteVideo(video.videoId)
+    router.push('/')
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
@@ -54,7 +62,9 @@ const VideoPage = ({ video, videoUrl }: VideoPageProps) => {
             Copy link
           </button>
 
-          <button className="px-3 py-2 rounded-md border text-sm text-red-500 hover:bg-red-50">
+          <button className="px-3 py-2 rounded-md border text-sm text-red-500 hover:bg-red-50"
+            onClick={deletevideo}
+          >
             Delete video
           </button>
 
