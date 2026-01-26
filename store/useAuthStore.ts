@@ -1,6 +1,7 @@
 import { signIn, signOut, signUp,signInSocial, getcurrentUser } from '@/lib/actions/auth-actions'
 import { create } from 'zustand'
 import type { User } from '@/lib/types'
+import toast from 'react-hot-toast'
 
 
 
@@ -37,10 +38,12 @@ export const useAuthStore = create<AuthStore>((set,get) => ({
             const {email,password,name} = data
             const result = await signUp(email,password,name);
             set({authUser : result.user})
+            toast.success("Account created successfully!")
             return result.user
         } catch (error) {
             console.log("Error in signup store...")
             set({authUser : null})
+            toast.error("Error creating account.")
         } finally{
             set({isCheckingAuth : false});
         }
@@ -52,10 +55,12 @@ export const useAuthStore = create<AuthStore>((set,get) => ({
             const {email,password} = data
             const result = await signIn(email,password)
             set({authUser : result.user})
+            toast.success("Signed In successfully!")
             return result.user
         } catch (error) {
             console.log("Error in signup store...")
             set({authUser : null})
+            toast.error("Cannot Sigin...")
         } finally{
             set({isCheckingAuth : false});
         }
@@ -66,8 +71,10 @@ export const useAuthStore = create<AuthStore>((set,get) => ({
         try {
             await signOut();
             set({authUser : null})
+            toast.success("Logged Out Successfully!!")
         } catch (error) {
             console.log("Error in signup store...")
+            toast.error("Cannot Logout...")
         } finally{
             set({isCheckingAuth : false})
         }
@@ -78,10 +85,12 @@ export const useAuthStore = create<AuthStore>((set,get) => ({
         try {
             await signInSocial(provider);
             const user = await getcurrentUser();
+            toast.success("Signed In successfully!")
             return user;
         } catch (error) {
             console.log("Error in signup store...")
             set({authUser : null})
+            toast.error("Cannot sign in ...")
         } finally {
             set({isCheckingAuth : false})
         }

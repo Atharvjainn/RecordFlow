@@ -34,11 +34,12 @@ export default function Dashboard() {
   const router = useRouter()
 
   useEffect(() => {
-    if(authUser && !isCheckingAuth){
-      getMyvideos()
-      getAllVideos()
-    }  
-  },[getMyvideos,authUser,isCheckingAuth,open])
+  if (!authUser || isCheckingAuth) return
+
+  getMyvideos()
+  getAllVideos()
+}, [authUser?.id, isCheckingAuth])
+
 
 
 

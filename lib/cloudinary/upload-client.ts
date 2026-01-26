@@ -1,5 +1,7 @@
 'use client';
 
+import toast from "react-hot-toast";
+
 
 type uploadClientVideoProps = {
   file : File,
@@ -25,9 +27,11 @@ export const uploadVideoClient = async ({file,title,description,visibility} : up
   if (!res.ok) {
     const text = await res.text();
     console.error("Upload-video response:", text);
+    toast.error("Cannot Upload...")
     throw new Error("Upload failed");
   }
 
+  toast.success("Video Uploaded Successfully!")
   return res.json()
 
 };

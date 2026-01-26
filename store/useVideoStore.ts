@@ -21,8 +21,6 @@ export const useVideoStore = create<VideoStore>((set,get) =>({
         set({isvideosloading : true})
         try {
             const user = useAuthStore.getState().authUser
-            console.log(user);
-            
             if(!user){
                 console.log("Unauthorised User")
                 throw new Error("Unauthorised User")
