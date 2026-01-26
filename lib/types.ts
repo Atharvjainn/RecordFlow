@@ -23,3 +23,18 @@ export interface Video {
     updatedAt? : Date,
     userId : string
 }
+
+export interface PublicUser {
+  id: string
+  name: string | null
+  image: string | null
+}
+
+export interface VideoWithUser {
+  id: string
+  title: string
+  description: string
+  visibility: Visibility
+  videoId : string,
+  user: PublicUser
+}

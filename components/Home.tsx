@@ -1,8 +1,4 @@
 'use client'
-import { useAuthStore } from "@/store/useAuthStore";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-
 
 export default function Home() {
 

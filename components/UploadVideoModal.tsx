@@ -1,6 +1,6 @@
 'use client';
 
-import { uploadVideoClient } from "@/lib/actions/upload-client";
+import { uploadVideoClient } from "@/lib/cloudinary/upload-client";
 import React, { useState,useEffect } from "react";
 
 type UploadVideoModalProps = {

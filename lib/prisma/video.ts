@@ -33,6 +33,20 @@ export const getVideoByid = async (videoId : string) => {
         const video = await prisma.video.findFirst({
             where : {
                 videoId : videoId
+            },
+            select : {
+                id : true,
+                title : true,
+                description : true,
+                visibility : true,
+                videoId : true,
+                user : {
+                    select : {
+                        id : true,
+                        name : true,
+                        image : true
+                    }
+                }
             }
         })
 
@@ -53,6 +67,35 @@ export const deleteVideoById = async(publicId : string) => {
         }
        })  
        return response;
+    } catch (error) {
+        console.error("Prisma delete video error:", error);
+        throw error
+    }
+}
+
+
+export const getAllVideos = async () => {
+    try {
+        const response = await prisma.video.findMany()
+        return response;
+    } catch (error) {
+        console.error("Prisma delete video error:", error);
+        throw error
+    }
+}
+
+
+export const updateVideoById = async (videoId : string,visibility : 'public' | 'private') => {
+    try {
+        const response = await prisma.video.update({
+            where : {
+                videoId : videoId
+            },
+            data : {
+                visibility : visibility
+            }
+        }) 
+        return response
     } catch (error) {
         console.error("Prisma delete video error:", error);
         throw error

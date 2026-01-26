@@ -1,33 +1,41 @@
 'use client'
 
 import { useState } from 'react'
-import { Video } from '@/lib/types'
+import {  VideoWithUser } from '@/lib/types'
 import { useAuthStore } from '@/store/useAuthStore'
 import { deleteVideo } from '@/lib/cloudinary/delete-client'
+import { copylink } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
+import { updateVideoById } from '@/lib/prisma/video'
 
 const TABS = ['Transcript', 'Metadata', 'Viewers', 'Chapters'] as const
 
 type VideoPageProps = {
-  video: Video
+  video: VideoWithUser
   videoUrl: string
 }
 
 const VideoPage = ({ video, videoUrl }: VideoPageProps) => {
   const { authUser } = useAuthStore()
+  const uploaderuser = video.user
 
   const [activeTab, setActiveTab] =
     useState<(typeof TABS)[number]>('Transcript')
 
+
   const [visibility, setVisibility] =
-    useState<'Public' | 'Private'>('Public')
+    useState<'public' | 'private'>(video.visibility)
 
   const [showVisibility, setShowVisibility] = useState(false)
   const router = useRouter()
 
   const deletevideo = () => {
     deleteVideo(video.videoId)
-    router.push('/')
+    router.push('/dashboard')
+  }
+
+  const visibilityhandler = async(next : "public" | "private") => {
+      await updateVideoById(video.videoId,next)
   }
 
   return (
@@ -43,11 +51,11 @@ const VideoPage = ({ video, videoUrl }: VideoPageProps) => {
           <div className="flex items-center gap-3 text-sm text-gray-500">
             <img
             //   src={authUser?.avatar ?? '/avatar.png'}
-              alt={authUser?.name ?? 'User'}
+              alt={uploaderuser?.name ?? 'User'}
               className="w-8 h-8 rounded-full"
             />
             <span className="font-medium text-gray-700">
-              {authUser?.name ?? 'Unknown user'}
+              {uploaderuser?.name ?? 'Unknown user'}
             </span>
           </div>
 
@@ -58,46 +66,57 @@ const VideoPage = ({ video, videoUrl }: VideoPageProps) => {
 
         {/* ACTIONS */}
         <div className="flex items-center gap-3">
-          <button className="px-3 py-2 rounded-md border text-sm text-gray-600 hover:bg-gray-50">
+          <button className="px-3 py-2 rounded-md border text-sm text-gray-600 hover:bg-gray-50"
+            onClick={copylink}
+          >
             Copy link
           </button>
 
+          {authUser?.id===uploaderuser.id &&
+          <>
           <button className="px-3 py-2 rounded-md border text-sm text-red-500 hover:bg-red-50"
             onClick={deletevideo}
           >
             Delete video
           </button>
 
-          {/* VISIBILITY DROPDOWN */}
           <div className="relative">
             <button
               onClick={() => setShowVisibility(prev => !prev)}
-              className="px-3 py-2 rounded-md border text-sm flex items-center gap-2"
+              className="px-3 py-2 rounded-md border text-sm flex items-center gap-2 cursor-pointer"
             >
-              👁 {visibility}
+              👁 {visibility.charAt(0).toUpperCase() + visibility.slice(1)}
             </button>
 
             {showVisibility && (
               <div className="absolute right-0 mt-2 w-32 rounded-md border bg-white shadow-lg z-10">
-                {['Public', 'Private'].map(option => (
+                {['public', 'private'].map(option => (
                   <button
                     key={option}
-                    onClick={() => {
-                      setVisibility(option as 'Public' | 'Private')
+                    onClick={async() => {
+                       const next = option as 'public' | 'private'
+                      setVisibility(next)
+                      await visibilityhandler(next)
                       setShowVisibility(false)
                     }}
                     className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-100 ${
-                      visibility === option
+                      (visibility) === option
                         ? 'text-pink-600 font-medium'
                         : 'text-gray-700'
                     }`}
                   >
-                    {option}
+                    {option.charAt(0).toUpperCase() + option.slice(1)}
                   </button>
                 ))}
               </div>
             )}
           </div>
+          </>
+          
+          }
+
+        
+          
         </div>
       </div>
 

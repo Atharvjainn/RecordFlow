@@ -21,17 +21,24 @@ import { useRouter } from "next/navigation";
 export default function Dashboard() {
   // const videos = Array.from({ length: 6 });
   const [open,setOpen] = useState(false)
-  const {videos,getvideos} = useVideoStore()
+  const {Myvideos,getMyvideos,getAllVideos,AllVideos} = useVideoStore()
   const {authUser,isCheckingAuth} = useAuthStore()
   const [recordOpen,SetrecordOpen] = useState(false)
   const [showRecorder,setshowRecorder] = useState(false);
   const [recordedFile,setrecordedFile] = useState<File | null > (null);
   const [source, setSource] = useState("screen");
+  const [activeTab, setActiveTab] = useState<"all" | "mine">("all")
+  const videos = activeTab === "all" ? AllVideos : Myvideos
+
+
   const router = useRouter()
 
   useEffect(() => {
-    if(authUser && !isCheckingAuth)  getvideos()
-  },[getvideos,authUser,isCheckingAuth,open])
+    if(authUser && !isCheckingAuth){
+      getMyvideos()
+      getAllVideos()
+    }  
+  },[getMyvideos,authUser,isCheckingAuth,open])
 
 
 
@@ -101,66 +108,78 @@ export default function Dashboard() {
 
       {/* MY VIDEOS HEADER */}
       <section className="mt-12 flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">My Videos</h2>
-          <p className="text-slate-500 text-sm">6 videos</p>
-        </div>
+  <div>
+    <h2 className="text-2xl font-bold">
+      {activeTab === "all" ? "All Videos" : "My Videos"}
+    </h2>
+    <p className="text-slate-500 text-sm">
+      {activeTab === "all"
+        ? `${AllVideos.length} videos`
+        : `${Myvideos.length} videos`}
+    </p>
+  </div>
 
-        <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 rounded-xl border font-medium text-sm">
-            <Filter size={16} />
-            Filter
-          </button>
+  {/* TABS */}
+  <div className="flex items-center rounded-xl border p-1 bg-slate-100">
+    <button
+      onClick={() => setActiveTab("all")}
+      className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+        activeTab === "all"
+          ? "bg-white shadow"
+          : "text-slate-500 hover:text-slate-700"
+      }`}
+    >
+      All Videos
+    </button>
 
-          <button className="p-2 rounded-xl border bg-primary text-white">
-            <LayoutGrid size={18} />
-          </button>
+    <button
+      onClick={() => setActiveTab("mine")}
+      className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+        activeTab === "mine"
+          ? "bg-white shadow"
+          : "text-slate-500 hover:text-slate-700"
+      }`}
+    >
+      My Videos
+    </button>
+  </div>
+        </section>
 
-          <button className="p-2 rounded-xl border text-slate-500">
-            <List size={18} />
-          </button>
-        </div>
-      </section>
 
       {/* VIDEO GRID */}
       <section className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {videos.map((video, i) => (
-          <Link href={`/${video.videoId}`} key={video.id} className="block">
-          <div
-            key={i}
-            className="rounded-2xl overflow-hidden border shadow-sm hover:shadow-lg transition bg-white"
-          >
-            {/* THUMBNAIL */}
-            
-              <img src={video.thumbnailUrl} className="relative" alt="" />
-              {/* <span className="absolute bottom-3 right-3 flex items-center gap-1 px-2 py-1 rounded-lg bg-black/80 text-white text-xs">
-                <Clock size={12} />
-                {["5:32", "45:18", "12:05", "8:20", "6:42", "9:10"][i]}
-              </span> */}
-            
+  {videos.map((video) => (
+    <Link
+      href={`/videos/${video.videoId}`}
+      key={video.id}
+      className="block"
+    >
+      <div className="rounded-2xl overflow-hidden border shadow-sm hover:shadow-lg transition bg-white">
+        {/* THUMBNAIL */}
+        <img
+          src={video.thumbnailUrl}
+          alt={video.title}
+          className="w-full aspect-video object-cover"
+        />
 
-            {/* CONTENT */}
-            <div className="p-4 space-y-2">
-              <h3 className="font-semibold leading-snug">
-                {video.title}
-              </h3>
+        {/* CONTENT */}
+        <div className="p-4 space-y-2">
+          <h3 className="font-semibold leading-snug line-clamp-2">
+            {video.title}
+          </h3>
 
-              <div className="flex items-center gap-2 text-sm text-slate-500">
-                <Calendar size={14} />
-                {[
-                  "Jan 15, 2024",
-                  "Jan 12, 2024",
-                  "Jan 10, 2024",
-                  "Jan 8, 2024",
-                  "Jan 6, 2024",
-                  "Jan 3, 2024",
-                ][i]}
-              </div>
-            </div>
+          <div className="flex items-center gap-2 text-sm text-slate-500">
+            <Calendar size={14} />
+            <span>
+              {new Date(video.createdAt).toLocaleDateString()}
+            </span>
           </div>
-          </Link>
-        ))}
+        </div>
+      </div>
+    </Link>
+  ))}
       </section>
+
     </main>
   );
 }

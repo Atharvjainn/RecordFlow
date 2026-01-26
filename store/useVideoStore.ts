@@ -1,20 +1,23 @@
 
 import { useAuthStore } from './useAuthStore'
 import {create} from 'zustand'
-import { getVideosByid } from "@/lib/prisma/video"
+import { getAllVideos, getVideosByid } from "@/lib/prisma/video"
 
 type VideoStore = {
     isvideosloading : boolean,
-    getvideos : () => void,
-    videos : any[],
+    getMyvideos : () => void,
+    Myvideos : any[],
+    getAllVideos : () => void,
+    AllVideos : any[],
 
 }
 
 export const useVideoStore = create<VideoStore>((set,get) =>({
     isvideosloading : false,
-    videos : [],
+    Myvideos : [],
+    AllVideos : [],
 
-    getvideos : async () => {
+    getMyvideos : async () => {
         set({isvideosloading : true})
         try {
             const user = useAuthStore.getState().authUser
@@ -25,11 +28,23 @@ export const useVideoStore = create<VideoStore>((set,get) =>({
                 throw new Error("Unauthorised User")
             }
             const videos = await getVideosByid(user.id)
-            set({videos : videos})
+            set({Myvideos : videos})
         } catch (error) {
             console.log("error in fetching videos",error);
         } finally {
             set({isvideosloading : false})
+        }
+    },
+
+    getAllVideos : async() => {
+        set({isvideosloading : true})
+        try {
+            const response = await getAllVideos();
+            set({AllVideos : response})
+        } catch (error) {
+            console.log("error in fetching all the videos",error);
+        } finally {
+            set({isvideosloading : true})
         }
     }
 
