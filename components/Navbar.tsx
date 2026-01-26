@@ -58,7 +58,7 @@ const Navbar = () => {
 
         <nav className="hidden md:flex items-center gap-8 text-slate-500 font-medium">
           <Link href="/dashboard">Dashboard</Link>
-          <Link href="#">How It Works</Link>
+          <Link href="/">Home</Link>
           {authUser ? <Link href="#" onClick={() => {
             signOut()
             router.push("/")

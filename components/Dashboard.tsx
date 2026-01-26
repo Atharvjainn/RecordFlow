@@ -16,6 +16,7 @@ import Link from "next/link";
 import RecordingModal from "./RecordModal";
 import RecorderControls from "./RecorderControls";
 import { startRecording } from "@/lib/recorder";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
   // const videos = Array.from({ length: 6 });
@@ -26,10 +27,13 @@ export default function Dashboard() {
   const [showRecorder,setshowRecorder] = useState(false);
   const [recordedFile,setrecordedFile] = useState<File | null > (null);
   const [source, setSource] = useState("screen");
+  const router = useRouter()
 
   useEffect(() => {
     if(authUser && !isCheckingAuth)  getvideos()
   },[getvideos,authUser,isCheckingAuth,open])
+
+
 
 
   
