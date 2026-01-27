@@ -2,6 +2,7 @@
 import { useAuthStore } from './useAuthStore'
 import {create} from 'zustand'
 import { getAllVideos, getVideosByid } from "@/lib/prisma/video"
+import toast from 'react-hot-toast'
 
 type VideoStore = {
     isvideosloading : boolean,
@@ -9,11 +10,14 @@ type VideoStore = {
     Myvideos : any[],
     getAllVideos : () => void,
     AllVideos : any[],
+    deletevideo : (publicId : string) => void,
+    isdeleting : boolean
 
 }
 
 export const useVideoStore = create<VideoStore>((set,get) =>({
     isvideosloading : false,
+    isdeleting : false,
     Myvideos : [],
     AllVideos : [],
 
@@ -37,12 +41,32 @@ export const useVideoStore = create<VideoStore>((set,get) =>({
     getAllVideos : async() => {
         set({isvideosloading : true})
         try {
-            const response = await getAllVideos();
+            const authUser = useAuthStore.getState().authUser
+            const response = await getAllVideos(authUser?.id!);
             set({AllVideos : response})
         } catch (error) {
             console.log("error in fetching all the videos",error);
         } finally {
             set({isvideosloading : true})
+        }
+    },
+
+    deletevideo : async(publicId : string) => {
+        set({isdeleting : true})
+        try {
+            if(!publicId) throw new Error('Public Id is missing!')
+            const res = await fetch(`/api/videos/${publicId}`,{
+                    method : "DELETE"
+            })
+
+            if(!res.ok) throw new Error(`error in deleting the video.. ${res.status}`)
+            toast.success("Video Deleted Successfully!!")
+            
+        } catch (error) {
+            console.log(error)
+            toast.error("cannot delete..")
+        } finally {
+            set({isdeleting : false})
         }
     }
 

@@ -7,6 +7,7 @@ import { deleteVideo } from '@/lib/cloudinary/delete-client'
 import { copylink } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 import { updateVideoById } from '@/lib/prisma/video'
+import { useVideoStore } from '@/store/useVideoStore'
 
 const TABS = ['Transcript', 'Metadata', 'Viewers', 'Chapters'] as const
 
@@ -16,9 +17,11 @@ type VideoPageProps = {
 }
 
 const VideoPage = ({ video, videoUrl }: VideoPageProps) => {
+  
   const { authUser } = useAuthStore()
+  const {deletevideo} = useVideoStore()
   const uploaderuser = video.user
-
+  console.log(uploaderuser?.image)
   const [activeTab, setActiveTab] =
     useState<(typeof TABS)[number]>('Transcript')
 
@@ -29,8 +32,8 @@ const VideoPage = ({ video, videoUrl }: VideoPageProps) => {
   const [showVisibility, setShowVisibility] = useState(false)
   const router = useRouter()
 
-  const deletevideo = () => {
-    deleteVideo(video.videoId)
+  const deleteVideo = () => {
+    deletevideo(video.videoId)
     router.push('/dashboard')
   }
 
@@ -50,9 +53,10 @@ const VideoPage = ({ video, videoUrl }: VideoPageProps) => {
 
           <div className="flex items-center gap-3 text-sm text-gray-500">
             <img
-            //   src={authUser?.avatar ?? '/avatar.png'}
+              src={uploaderuser?.image as string}
               alt={uploaderuser?.name ?? 'User'}
               className="w-8 h-8 rounded-full"
+              referrerPolicy="no-referrer"
             />
             <span className="font-medium text-gray-700">
               {uploaderuser?.name ?? 'Unknown user'}
@@ -75,7 +79,7 @@ const VideoPage = ({ video, videoUrl }: VideoPageProps) => {
           {authUser?.id===uploaderuser.id &&
           <>
           <button className="px-3 py-2 rounded-md border text-sm text-red-500 hover:bg-red-50"
-            onClick={deletevideo}
+            onClick={deleteVideo}
           >
             Delete video
           </button>

@@ -74,9 +74,16 @@ export const deleteVideoById = async(publicId : string) => {
 }
 
 
-export const getAllVideos = async () => {
+export const getAllVideos = async (id : string) => {
     try {
-        const response = await prisma.video.findMany()
+        const response = await prisma.video.findMany({
+            where : {
+                OR : [
+                    {visibility : 'public'},
+                    {userId : id}
+                ]
+            }
+        })
         return response;
     } catch (error) {
         console.error("Prisma delete video error:", error);

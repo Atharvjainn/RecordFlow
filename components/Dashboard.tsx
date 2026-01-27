@@ -16,12 +16,12 @@ import Link from "next/link";
 import RecordingModal from "./RecordModal";
 import RecorderControls from "./RecorderControls";
 import { startRecording } from "@/lib/recorder";
-import { useRouter } from "next/navigation";
+
 
 export default function Dashboard() {
   // const videos = Array.from({ length: 6 });
   const [open,setOpen] = useState(false)
-  const {Myvideos,getMyvideos,getAllVideos,AllVideos} = useVideoStore()
+  const {Myvideos,getMyvideos,getAllVideos,AllVideos,isdeleting} = useVideoStore()
   const {authUser,isCheckingAuth} = useAuthStore()
   const [recordOpen,SetrecordOpen] = useState(false)
   const [showRecorder,setshowRecorder] = useState(false);
@@ -31,14 +31,12 @@ export default function Dashboard() {
   const videos = activeTab === "all" ? AllVideos : Myvideos
 
 
-  const router = useRouter()
-
   useEffect(() => {
   if (!authUser || isCheckingAuth) return
 
   getMyvideos()
   getAllVideos()
-}, [authUser?.id, isCheckingAuth])
+}, [authUser?.id, isCheckingAuth,isdeleting])
 
 
 
