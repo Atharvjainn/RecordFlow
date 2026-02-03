@@ -3,28 +3,27 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { Select } from "./Select";
+import { useUiStore } from "@/store/useUiStore";
+import { startRecording } from "@/lib/recorder";
 
-type RecordModalProps = {
-  isOpen: boolean;
-  onClose: () => void;
-  onStop: (config: {
-    source: "camera" | "screen" | "screen+camera";
-    cameraDeviceId?: string;
-    micDeviceId?: string;
-  }) => void;
-};
+// type RecordModalProps = {
+//   isOpen: boolean;
+//   onClose: () => void;
+//   onStop: (config: {
+//     source: "camera" | "screen" | "screen+camera";
+//     cameraDeviceId?: string;
+//     micDeviceId?: string;
+//   }) => void;
+// };
 
 const SOURCE_OPTIONS = [
   "camera",
   "screen",
-  "screen+camera"
 ];
 
-export default function RecordingModal({
-  isOpen,
-  onClose,
-  onStop,
-}: RecordModalProps) {
+export default function RecordingModal() {
+  const {open,close,activeModal,RecordControls,closeRecordControls,openRecordControls} = useUiStore()
+  console.log(activeModal)
   const [source, setSource] = useState("screen");
   const [camera, setCamera] = useState("");
   const [mic, setMic] = useState("");
@@ -47,10 +46,10 @@ export default function RecordingModal({
 
   // ⌨️ ESC key close
   useEffect(() => {
-    if (!isOpen) return;
+    if (!activeModal) return;
 
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") close();
     };
 
     document.addEventListener("keydown", handleEsc);
@@ -60,7 +59,7 @@ export default function RecordingModal({
       document.removeEventListener("keydown", handleEsc);
       document.body.style.overflow = "auto";
     };
-  }, [isOpen, onClose]);
+  }, [activeModal]);
 
   const cameraOptions = cameras.map(c => c.label || "Camera");
   const micOptions = mics.map(m => m.label || "Microphone");
@@ -68,12 +67,14 @@ export default function RecordingModal({
   const selectedCamera = cameras.find(c => c.label === camera);
   const selectedMic = mics.find(m => m.label === mic);
 
+
   return (
+    
     // 🌑 BACKDROP
     <div
-      onClick={onClose}
+      onClick={() => close()}
       className={`fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-200 ${
-        isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        activeModal=="Recorder" ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
       }`}
     >
       {/* 🪟 MODAL */}
@@ -83,7 +84,7 @@ export default function RecordingModal({
       >
         {/* ❌ Close Button */}
         <button
-          onClick={onClose}
+          onClick={() => close()}
           className="absolute right-4 top-4 rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition"
         >
           <X size={18} />
@@ -122,13 +123,18 @@ export default function RecordingModal({
         {/* Action Button */}
         <button
           className="mt-6 w-full rounded-lg bg-pink-500 py-3 text-sm font-medium text-white hover:bg-pink-600 transition"
+          // onClick={() => {
+          //   onStop({
+          //   source: source as "camera" | "screen" | "screen+camera",
+          //   cameraDeviceId: selectedCamera?.deviceId,
+          //   micDeviceId: selectedMic?.deviceId,
+          // });  
+          //   close();  // close modal
+          // }}
           onClick={() => {
-            onStop({
-            source: source as "camera" | "screen" | "screen+camera",
-            cameraDeviceId: selectedCamera?.deviceId,
-            micDeviceId: selectedMic?.deviceId,
-          });  
-            onClose();  // close modal
+            startRecording({mode : source as 'camera' | 'screen',videoDeviceId : selectedCamera?.deviceId,audioDeviceId : selectedMic?.deviceId})
+            openRecordControls()
+            close()
           }}
         >
           Start Recording
@@ -137,3 +143,5 @@ export default function RecordingModal({
     </div>
   );
 }
+
+

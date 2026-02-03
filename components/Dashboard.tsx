@@ -16,17 +16,17 @@ import Link from "next/link";
 import RecordingModal from "./RecordModal";
 import RecorderControls from "./RecorderControls";
 import { startRecording } from "@/lib/recorder";
+import Hero from "./Hero";
+import { useUiStore } from "@/store/useUiStore";
 
 
 export default function Dashboard() {
   // const videos = Array.from({ length: 6 });
-  const [open,setOpen] = useState(false)
+  const {RecordControls,closeRecordControls,activeModal,open} = useUiStore()
+  // const [open,setOpen] = useState(false)
   const {Myvideos,getMyvideos,getAllVideos,AllVideos,isdeleting} = useVideoStore()
   const {authUser,isCheckingAuth} = useAuthStore()
-  const [recordOpen,SetrecordOpen] = useState(false)
-  const [showRecorder,setshowRecorder] = useState(false);
   const [recordedFile,setrecordedFile] = useState<File | null > (null);
-  const [source, setSource] = useState("screen");
   const [activeTab, setActiveTab] = useState<"all" | "mine">("all")
   const videos = activeTab === "all" ? AllVideos : Myvideos
 
@@ -48,26 +48,28 @@ export default function Dashboard() {
   return (
     <main className="px-8 py-10">
 
-      {showRecorder && <RecorderControls onFinish={(file) => {
+      {/* {RecordControls && <RecorderControls onFinish={(file) => {
         setrecordedFile(file)
-        setOpen(true)
-        setshowRecorder(false)
-      }}/>}
+        open("Upload")
+        closeRecordControls()
+      }}/>} */}
 
-      <RecordingModal isOpen={recordOpen} onClose={() => {SetrecordOpen(false)}} 
+      {/* <RecordingModal isOpen={recordOpen} onClose={() => {SetrecordOpen(false)}} 
           onStop={(config) => {
             startRecording({mode : config.source,videoDeviceId : config.cameraDeviceId,audioDeviceId : config.cameraDeviceId
             })
-            setshowRecorder(true)
+           
           }}      
-      />
-      <UploadVideoModal isOpen={open} onClose={() => {
-        setOpen(false)
+      /> */}
+
+      
+      <UploadVideoModal  onClose={() => {
+        close()
         setrecordedFile(null)
         } } initialFile={recordedFile}/>
       {/* RECORD ACTIONS */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="flex items-center gap-5 p-6 rounded-2xl bg-linear-to-br from-[#f2efff] to-[#f7f4ff] border cursor-pointer hover:shadow-md transition" onClick={() => SetrecordOpen(true)}>
+      {/* <section className="grid grid-cols-1 md:grid-cols-2 gap-6"> */}
+        {/* <div className="flex items-center gap-5 p-6 rounded-2xl bg-linear-to-br from-[#f2efff] to-[#f7f4ff] border cursor-pointer hover:shadow-md transition" onClick={() => SetrecordOpen(true)}>
           <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-primary to-secondary grid place-items-center text-white">
             <Monitor />
           </div>
@@ -77,9 +79,9 @@ export default function Dashboard() {
               Capture your screen or window
             </p>
           </div>
-        </div>
+        </div> */}
 
-        <div className="flex items-center gap-5 p-6 rounded-2xl bg-linear-to-br from-[#fff0f7] to-[#fff6fb] border cursor-pointer hover:shadow-md transition" onClick={() => setOpen(true)}>
+        {/* <div className="flex items-center gap-5 p-6 rounded-2xl bg-linear-to-br from-[#fff0f7] to-[#fff6fb] border cursor-pointer hover:shadow-md transition" onClick={() => setOpen(true)}>
           <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-secondary to-primary grid place-items-center text-white">
             <Camera />
           </div>
@@ -89,21 +91,12 @@ export default function Dashboard() {
              Upload Video
             </p>
           </div>
-        </div>
+        </div> */}
+        <Hero />
 
 
-        <div className="flex items-center gap-5 p-6 rounded-2xl bg-linear-to-br from-[#fff0f7] to-[#fff6fb] border cursor-pointer hover:shadow-md transition">
-          <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-secondary to-primary grid place-items-center text-white">
-            <Camera />
-          </div>
-          <div>
-            <h3 className="font-semibold text-lg">Record Webcam</h3>
-            <p className="text-slate-500 text-sm">
-              Record from your camera
-            </p>
-          </div>
-        </div>
-      </section>
+        
+      {/* </section> */}
 
       {/* MY VIDEOS HEADER */}
       <section className="mt-12 flex items-center justify-between">

@@ -1,21 +1,20 @@
 'use client';
 
 import { uploadVideoClient } from "@/lib/cloudinary/upload-client";
+import { useUiStore } from "@/store/useUiStore";
 import React, { useState,useEffect } from "react";
 
 type UploadVideoModalProps = {
-  isOpen: boolean;
   onClose: () => void;
   initialFile : File | null
 };
 
 export default function UploadVideoModal({
-  isOpen,
   onClose,
   initialFile
 }: UploadVideoModalProps) {
   
-
+    const {activeModal} = useUiStore()
     const [title,setTitle] = useState<string>("")
     const [description,setDescription] = useState<string>("")
     const [visibility,setVisibility] = useState<'public' | 'private'> ("private")
@@ -58,7 +57,7 @@ export default function UploadVideoModal({
 
   return (
     <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black/40
-    ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
+    ${activeModal=="Upload" ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
     `}>
       <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
         {/* Header */}
