@@ -15,7 +15,17 @@ export function slugify(text: string) {
   return text
     .toLowerCase()
     .trim()
-    .replace(/[\s_]+/g, '-')      // spaces & underscores → -
-    .replace(/[^\w\-]+/g, '')     // remove non-word chars
-    .replace(/\-\-+/g, '-')       // collapse multiple -
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, ""); // 🔥 remove leading/trailing -
+}
+
+
+
+
+export function userProfileUrl(user: { id: string; name: string }) {
+  return `/users/${slugify(user.name)}-${user.id}`
 }

@@ -1,37 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { User, Video } from "@/lib/types";
 
 // Types
-export type PublicUser = {
-  id: string;
-  name: string;
-  email?: string;
-  image?: string | null;
-};
 
-export type PublicVideo = {
-  videoId: string;
-  title: string;
-  thumbnail: string;
-  duration: string;
-  views: number;
-  createdAt: string;
-};
+
 
 // Props expected from server page
-export default function PublicProfilePage({
+export default function  PublicProfilePage({
   user,
   videos,
 }: {
-  user: PublicUser;
-  videos: PublicVideo[];
+  user: User;
+  videos: Video[];
 }) {
   return (
     <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
 
       {/* PROFILE HEADER */}
       <div className="flex items-center gap-5">
-        <Image
+        <img
           src={user.image ?? "/avatar-fallback.png"}
           alt={user.name}
           width={64}
@@ -71,13 +59,13 @@ export default function PublicProfilePage({
         {videos.map((video) => (
           <Link
             key={video.videoId}
-            href={`/video/${video.videoId}`}
+            href={`/videos/${video.videoId}`}
             className="group rounded-xl border bg-white overflow-hidden hover:shadow-lg transition"
           >
             {/* Thumbnail */}
             <div className="relative">
-              <Image
-                src={video.thumbnail}
+              <img
+                src={video.thumbnailUrl}
                 alt={video.title}
                 width={400}
                 height={225}
@@ -95,9 +83,9 @@ export default function PublicProfilePage({
                 {video.title}
               </h3>
 
-              <p className="text-xs text-gray-500">
+              {/* <p className="text-xs text-gray-500">
                 {video.views} views · {video.createdAt}
-              </p>
+              </p> */}
             </div>
           </Link>
         ))}

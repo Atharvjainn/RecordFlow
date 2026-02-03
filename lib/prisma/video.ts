@@ -109,3 +109,21 @@ export const updateVideoById = async (videoId : string,visibility : 'public' | '
         throw error
     }
 }
+
+
+export const getVideosForPublicById = async (userId : string) => {
+    try {
+        const response = await prisma.video.findMany({
+            where : {
+                AND : [
+                    {userId : userId},
+                    {visibility : 'public'}
+                ]
+            }
+        })
+        return response
+    } catch (error) {
+        console.error("error in fetching videos", error);
+        throw error
+    }
+}

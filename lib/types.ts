@@ -1,3 +1,5 @@
+import { JsonValue } from "@prisma/client/runtime/client"
+
 export interface User {
     email : string,
     emailVerified : boolean,
@@ -21,6 +23,7 @@ export interface Video {
     duration : number | null,
     createdAt? : Date,
     updatedAt? : Date,
+    transcript? : any, 
     userId : string
 }
 

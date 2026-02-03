@@ -4,6 +4,9 @@ import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/useAuthStore'
 import { getcurrentUser } from '@/lib/actions/auth-actions'
 import Link from 'next/link'
+import { userProfileUrl } from '@/lib/utils'
+
+
 
 const Navbar = () => {
     const [open,setOpen] = useState< "signin" | "signup" | null> (null)
@@ -16,6 +19,7 @@ const Navbar = () => {
     useEffect(() => {
       checkauth();
     },[checkauth])
+
 
 
     const buttonhandler = async() => {
@@ -197,12 +201,12 @@ const Navbar = () => {
         </div>
       )}
           
-          <a
-            href="#"
+         { authUser &&  <Link
+            href={`/users/${authUser.id}`}
             className="px-5 py-2 rounded-full bg-linear-to-br from-primary to-secondary text-white font-semibold"
           >
-            Get Started
-          </a>
+            User
+          </Link>}
         </nav>
       </header>
   )

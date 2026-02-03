@@ -7,6 +7,7 @@ import { copylink } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 import { updateVideoById } from '@/lib/prisma/video'
 import { useVideoStore } from '@/store/useVideoStore'
+import Link from 'next/link'
 
 const TABS = ['Transcript', 'Metadata', 'Viewers', 'Chapters'] as const
 
@@ -51,6 +52,7 @@ const VideoPage = ({ video, videoUrl  }: VideoPageProps) => {
           </h1>
 
           <div className="flex items-center gap-3 text-sm text-gray-500">
+            <Link href={`/users/${uploaderuser.id}`} className='flex items-center gap-2'>
             <img
               src={uploaderuser?.image as string}
               alt={uploaderuser?.name ?? 'User'}
@@ -60,6 +62,7 @@ const VideoPage = ({ video, videoUrl  }: VideoPageProps) => {
             <span className="font-medium text-gray-700">
               {uploaderuser?.name ?? 'Unknown user'}
             </span>
+            </Link>
           </div>
 
           <p className="text-gray-600 max-w-3xl">
