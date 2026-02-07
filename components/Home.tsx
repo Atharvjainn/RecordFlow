@@ -25,8 +25,8 @@ export default function LandingPage() {
       {/* ================= HERO ================= */}
       <section className="relative overflow-hidden">
         {/* Background layers */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#fde9e2] via-[#fbf7ef] to-[#fbf7ef]" />
-        <div className="absolute top-[-35%] left-1/2 h-[700px] w-[700px] -translate-x-1/2 rounded-full bg-red-500/20 blur-[180px]" />
+        <div className="absolute inset-0 bg-linear-to-b from-[#fde9e2] via-[#fbf7ef] to-[#fbf7ef]" />
+        <div className="absolute top-[-35%] left-1/2 h-175 w-175 -translate-x-1/2 rounded-full bg-red-500/20 blur-[180px]" />
 
         {/* Content */}
         <div className="relative mx-auto max-w-6xl px-6 pt-28 pb-32 text-center">
@@ -35,10 +35,7 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-1.5 text-xs font-semibold mb-6 shadow-sm">
-              <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-              Now in Public Beta
-            </span>
+            
 
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 text-black">
               The bold way to <br />
@@ -73,7 +70,7 @@ export default function LandingPage() {
             className="mt-20 mx-auto max-w-4xl"
           >
             <div className="overflow-hidden rounded-[2.5rem] border bg-white shadow-xl">
-              <div className="aspect-[16/10] bg-black flex items-center justify-center">
+              <div className="aspect-16/10 bg-black flex items-center justify-center">
                 <div className="h-20 w-20 rounded-full bg-white/10 backdrop-blur flex items-center justify-center">
                   <Play className="h-10 w-10 text-white fill-white" />
                 </div>

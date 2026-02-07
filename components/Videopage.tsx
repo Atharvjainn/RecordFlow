@@ -19,11 +19,9 @@ type VideoPageProps = {
 const VideoPage = ({ video, videoUrl  }: VideoPageProps) => {
   
   const { authUser } = useAuthStore()
-  const {deletevideo} = useVideoStore()
+  const {deletevideo,isdeleting} = useVideoStore()
   const uploaderuser = video.user
   console.log(uploaderuser?.image)
-  const [activeTab, setActiveTab] =
-    useState<(typeof TABS)[number]>('Transcript')
 
 
   const [visibility, setVisibility] =
@@ -32,8 +30,8 @@ const VideoPage = ({ video, videoUrl  }: VideoPageProps) => {
   const [showVisibility, setShowVisibility] = useState(false)
   const router = useRouter()
 
-  const deleteVideo = () => {
-    deletevideo(video.videoId)
+  const deleteVideo = async() => {
+     deletevideo(video.videoId)
     router.push('/dashboard')
   }
 

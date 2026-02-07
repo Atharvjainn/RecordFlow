@@ -1,204 +1,182 @@
 "use client";
 
-import {
-  Monitor,
-  Camera,
-  Filter,
-  LayoutGrid,
-  List,
-  Calendar
-} from "lucide-react";
+import { Monitor } from "lucide-react";
 import { useEffect, useState } from "react";
-import UploadVideoModal from "./UploadVideoModal";
+import { motion } from "framer-motion";
 import { useVideoStore } from "@/store/useVideoStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import Link from "next/link";
-import RecordingModal from "./RecordModal";
-import RecorderControls from "./RecorderControls";
-import { startRecording } from "@/lib/recorder";
 import Hero from "./Hero";
 import { formatDuration } from "@/lib/utils";
 import { useUiStore } from "@/store/useUiStore";
-import Loader from "./Loader";
-
+import { VideoSkeleton } from "./VideoSkeleton";
 
 export default function Dashboard() {
-  const {RecordControls,closeRecordControls,activeModal,open} = useUiStore()
-  const {Myvideos,getMyvideos,getAllVideos,AllVideos,isdeleting} = useVideoStore()
-  const {authUser,isCheckingAuth,checkauth} = useAuthStore()
-  const [recordedFile,setrecordedFile] = useState<File | null > (null);
-  const [activeTab, setActiveTab] = useState<"all" | "mine">("all")
-  const videos = activeTab === "all" ? AllVideos : Myvideos
-  
+  const { open } = useUiStore();
+  const {
+    Myvideos,
+    getMyvideos,
+    getAllVideos,
+    AllVideos,
+    isdeleting,
+    isuploading,
+    isvideosloading
+  } = useVideoStore();
+  const { authUser, isCheckingAuth } = useAuthStore();
+
+  const [activeTab, setActiveTab] = useState<"all" | "mine">("all");
+  const videos = activeTab === "all" ? AllVideos : Myvideos;
+
 
 
   useEffect(() => {
-  if (!authUser || isCheckingAuth) return
-
-  getMyvideos()
-  getAllVideos()
-}, [authUser?.id, isCheckingAuth,isdeleting])
-
-
-
-
-
-
-
-  
-  
+    if (!authUser || isCheckingAuth) return;
+    getMyvideos();
+    getAllVideos();
+  }, [authUser?.id, isCheckingAuth, isdeleting, isuploading]);
 
   return (
-    <main className="px-8 py-10">
+    <motion.main
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
+      className="px-8 py-10"
+    >
+      <Hero />
 
-      {/* {RecordControls && <RecorderControls onFinish={(file) => {
-        setrecordedFile(file)
-        open("Upload")
-        closeRecordControls()
-      }}/>} */}
-
-      {/* <RecordingModal isOpen={recordOpen} onClose={() => {SetrecordOpen(false)}} 
-          onStop={(config) => {
-            startRecording({mode : config.source,videoDeviceId : config.cameraDeviceId,audioDeviceId : config.cameraDeviceId
-            })
-           
-          }}      
-      /> */}
-
-      {activeModal=="Recorder" && <RecordingModal />}
-      {activeModal=="Upload" && <UploadVideoModal/>}
-      {/* RECORD ACTIONS */}
-      {/* <section className="grid grid-cols-1 md:grid-cols-2 gap-6"> */}
-        {/* <div className="flex items-center gap-5 p-6 rounded-2xl bg-linear-to-br from-[#f2efff] to-[#f7f4ff] border cursor-pointer hover:shadow-md transition" onClick={() => SetrecordOpen(true)}>
-          <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-primary to-secondary grid place-items-center text-white">
-            <Monitor />
-          </div>
-          <div>
-            <h3 className="font-semibold text-lg">Record Screen</h3>
-            <p className="text-slate-500 text-sm">
-              Capture your screen or window
-            </p>
-          </div>
-        </div> */}
-
-        {/* <div className="flex items-center gap-5 p-6 rounded-2xl bg-linear-to-br from-[#fff0f7] to-[#fff6fb] border cursor-pointer hover:shadow-md transition" onClick={() => setOpen(true)}>
-          <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-secondary to-primary grid place-items-center text-white">
-            <Camera />
-          </div>
-          <div>
-            <h3 className="font-semibold text-lg">Upload Video</h3>
-            <p className="text-slate-500 text-sm">
-             Upload Video
-            </p>
-          </div>
-        </div> */}
-        <Hero />
-
-
-        
-      {/* </section> */}
-
-      {/* MY VIDEOS HEADER */}
+      {/* HEADER */}
       <section className="mt-12 flex items-center justify-between">
-  <div>
-    <h2 className="text-2xl font-bold">
-      {activeTab === "all" ? "All Videos" : "My Videos"}
-    </h2>
-    <p className="text-slate-500 text-sm">
-      {activeTab === "all"
-        ? `${AllVideos.length} videos`
-        : `${Myvideos.length} videos`}
-    </p>
-  </div>
-
-  {/* TABS */}
-  <div className="flex items-center rounded-xl border p-1 bg-slate-100">
-    <button
-      onClick={() => setActiveTab("all")}
-      className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-        activeTab === "all"
-          ? "bg-white shadow"
-          : "text-slate-500 hover:text-slate-700"
-      }`}
-    >
-      All Videos
-    </button>
-
-    <button
-      onClick={() => setActiveTab("mine")}
-      className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-        activeTab === "mine"
-          ? "bg-white shadow"
-          : "text-slate-500 hover:text-slate-700"
-      }`}
-    >
-      My Videos
-    </button>
-  </div>
-        </section>
-
-
-      {/* VIDEO GRID */}
-      <section className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-  {videos.map((video) => (
-    <Link
-      href={`/videos/${video.videoId}`}
-      key={video.id}
-      className="group block"
-    >
-      <div className="rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-lg transition">
-
-        {/* THUMBNAIL */}
-        <div className="relative aspect-video bg-black">
-
-          {/* Thumbnail image */}
-          <img
-            src={video.thumbnailUrl}
-            alt={video.title}
-            className="h-full w-full object-cover opacity-90"
-          />
-
-          {/* Dark gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
-
-          {/* Top-left badge */}
-          <div className="absolute top-3 left-3 flex items-center gap-2 rounded-full bg-black/70 px-3 py-1 text-xs text-white">
-            <span className="h-2 w-2 rounded-full bg-red-500" />
-            <span>{formatDuration(video.duration) ?? "03:42"}</span>
-            <span className="opacity-60">•</span>
-            <span>{video.relativeTime ?? "Today"}</span>
-          </div>
-
-          {/* Play button */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/10 backdrop-blur text-white transition group-hover:scale-105">
-              <svg
-                viewBox="0 0 24 24"
-                className="h-6 w-6 fill-current translate-x-[1px]"
-              >
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        {/* INFO PANEL */}
-        <div className="p-4">
-          <h3 className="font-semibold leading-snug line-clamp-2">
-            {video.title}
-          </h3>
-
-          <p className="mt-1 text-sm text-slate-500">
-           {video.visibility?.[0].toUpperCase() + video.visibility.slice(1)} • 1080p
+        <div>
+          <h2 className="text-2xl font-bold">
+            {activeTab === "all" ? "All Videos" : "My Videos"}
+          </h2>
+          <p className="text-slate-500 text-sm">
+            {videos.length} videos
           </p>
         </div>
 
-      </div>
-    </Link>
-  ))}
-</section>
+        {/* TABS */}
+        <div className="flex items-center rounded-full border border-black/10 bg-white/70 backdrop-blur px-1 py-1 shadow-sm">
+          <button
+            onClick={() => setActiveTab("all")}
+            className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${
+              activeTab === "all"
+                ? "bg-black text-white shadow"
+                : "text-slate-600 hover:text-black"
+            }`}
+          >
+            All Videos
+          </button>
+          <button
+            onClick={() => setActiveTab("mine")}
+            className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${
+              activeTab === "mine"
+                ? "bg-black text-white shadow"
+                : "text-slate-600 hover:text-black"
+            }`}
+          >
+            My Videos
+          </button>
+        </div>
+      </section>
 
+      {/* CONTENT */}
+      <section className="mt-6">
+        {isvideosloading ? (
+          /* 🔄 LOADING */
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <VideoSkeleton key={i} />
+            ))}
+          </div>
+        ) : videos.length === 0 ? (
+          /* 🚫 EMPTY */
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35 }}
+            className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-black/10 bg-white py-20 text-center"
+          >
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-black/5">
+              <Monitor className="h-8 w-8 text-red-600" />
+            </div>
 
-    </main>
+            <h3 className="text-lg font-semibold text-black">
+              No videos yet
+            </h3>
+
+            <p className="mt-2 max-w-sm text-sm text-slate-500">
+              {activeTab === "mine"
+                ? "You haven’t recorded or uploaded any videos yet."
+                : "There are no videos to show right now."}
+            </p>
+
+            <button
+              onClick={() => open("Recorder")}
+              className="mt-6 rounded-full bg-black px-6 py-2.5 text-sm font-semibold text-white hover:bg-black/90 transition"
+            >
+              Record your first video
+            </button>
+          </motion.div>
+        ) : (
+          /* 🎬 VIDEOS */
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            initial="hidden"
+            animate="show"
+            variants={{
+              hidden: {},
+              show: {
+                transition: { staggerChildren: 0.06 },
+              },
+            }}
+          >
+            {videos.map((video) => (
+              <motion.div
+                key={video.id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+              >
+                <Link
+                  href={`/videos/${video.videoId}`}
+                  className="group block"
+                >
+                  <div className="rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-lg transition">
+                    <div className="relative aspect-video bg-black">
+                      <img
+                        src={video.thumbnailUrl}
+                        alt={video.title}
+                        className="h-full w-full object-cover opacity-90"
+                      />
+
+                      <div className="absolute inset-0 bg-linear-to-t from-black/40 via-black/10 to-transparent" />
+
+                      <div className="absolute top-3 left-3 flex items-center gap-2 rounded-full bg-black/70 px-3 py-1 text-xs text-white">
+                        <span className="h-2 w-2 rounded-full bg-red-500" />
+                        <span>
+                          {formatDuration(video.duration) ?? "00:00"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="p-4">
+                      <h3 className="font-semibold leading-snug line-clamp-2">
+                        {video.title}
+                      </h3>
+                      <p className="mt-1 text-sm text-slate-500">
+                        {video.visibility?.[0].toUpperCase() +
+                          video.visibility.slice(1)}{" "}
+                        • 1080p
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </section>
+    </motion.main>
   );
 }

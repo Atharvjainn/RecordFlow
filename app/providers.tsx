@@ -5,6 +5,9 @@ import { useAuthStore } from "@/store/useAuthStore";
 import Navbar from "@/components/Navbar";
 import Loader from "@/components/Loader";
 import FancyFooter from "@/components/Footer";
+import RecordingModal from "@/components/RecordModal";
+import UploadVideoModal from "@/components/UploadVideoModal";
+import RecorderControls from "@/components/RecorderControls";
 
 export default function Providers({
   children,
@@ -24,6 +27,9 @@ export default function Providers({
   return (
     <>
       <Navbar />
+      <RecordingModal />
+      <UploadVideoModal />
+      <RecorderControls />
       <div className="mt-20">
         {children}
       </div>

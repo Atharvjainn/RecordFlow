@@ -52,8 +52,6 @@ export default function RootLayout({
   </div> */}
   {/* <FancyFooter /> */}
   
-  {/* <RecordingModal /> */}
-  <RecorderControls />
   {/* <AuthModal /> */}
   <ToasterProvider />
 </body>

@@ -4,6 +4,13 @@ import {create} from 'zustand'
 import { getAllVideos, getVideosByid } from "@/lib/prisma/video"
 import toast from 'react-hot-toast'
 
+type uploadClientVideoProps = {
+  file : File,
+  title : string,
+  description : string,
+  visibility : 'public' | 'private'
+}
+
 type VideoStore = {
     isvideosloading : boolean,
     getMyvideos : () => void,
@@ -12,12 +19,15 @@ type VideoStore = {
     AllVideos : any[],
     deletevideo : (publicId : string) => void,
     isdeleting : boolean
+    uploadVideo : (data : uploadClientVideoProps ) => void,
+    isuploading : boolean,
 
 }
 
 export const useVideoStore = create<VideoStore>((set,get) =>({
-    isvideosloading : false,
+    isvideosloading : true,
     isdeleting : false,
+    isuploading : false,
     Myvideos : [],
     AllVideos : [],
 
@@ -68,6 +78,32 @@ export const useVideoStore = create<VideoStore>((set,get) =>({
         } finally {
             set({isdeleting : false})
         }
+    },
+
+    uploadVideo : async(data : uploadClientVideoProps) => {
+        set({isuploading : true})
+        try {
+            const {file,title,description,visibility} = data
+            const formdata = new FormData()
+            formdata.append("file",file)
+            formdata.append("title", title);
+            formdata.append("description", description);
+            formdata.append("visibility", visibility);
+
+            const res = await fetch("/api/videos", {
+              method: "POST",
+              body: formdata,
+            });
+
+            toast.success("Video Uploaded Successfully!!")
+        } catch (error) {
+            console.log(error)
+            toast.error("Cannot upload!!")
+        }finally {
+            set({isuploading : false})
+        }
     }
+
+    
 
 }))

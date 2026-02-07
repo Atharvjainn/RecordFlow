@@ -77,12 +77,17 @@ const Navbar = () => {
             <div ref={menuRef} className="relative">
               <button
                 onClick={() => setMenuOpen((v) => !v)}
-                className="flex items-center gap-1 rounded-full border bg-white px-2 py-2 shadow-sm hover:shadow transition"
+                className="flex items-center gap-2 rounded-full border bg-white px-2 py-2 shadow-sm hover:shadow transition"
               >
                 {/* Avatar */}
+                {authUser.image ? <img className="flex h-9 w-9 items-center justify-center rounded-full bg-black text-sm font-semibold text-white" src={authUser.image as string} alt="" />
+                : 
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-black text-sm font-semibold text-white">
                   {authUser.name?.[0]?.toUpperCase() ?? "U"}
                 </div>
+                
+                }
+                
 
                 {/* Name + Email */}
                 <div className="hidden sm:flex flex-col items-start">
