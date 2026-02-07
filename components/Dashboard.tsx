@@ -10,6 +10,7 @@ import Hero from "./Hero";
 import { formatDuration } from "@/lib/utils";
 import { useUiStore } from "@/store/useUiStore";
 import { VideoSkeleton } from "./VideoSkeleton";
+import Loader from "./Loader";
 
 export default function Dashboard() {
   const { open } = useUiStore();
@@ -20,20 +21,27 @@ export default function Dashboard() {
     AllVideos,
     isdeleting,
     isuploading,
-    isvideosloading
+    isvideosloading,
   } = useVideoStore();
   const { authUser, isCheckingAuth } = useAuthStore();
 
   const [activeTab, setActiveTab] = useState<"all" | "mine">("all");
   const videos = activeTab === "all" ? AllVideos : Myvideos;
+  const [hasloaded,sethasloaded] = useState(false)
 
 
 
   useEffect(() => {
     if (!authUser || isCheckingAuth) return;
-    getMyvideos();
-    getAllVideos();
+    Promise.all([
+    getMyvideos(),
+    getAllVideos(),
+  ]).finally(() => {
+    sethasloaded(true);
+  });
   }, [authUser?.id, isCheckingAuth, isdeleting, isuploading]);
+
+  if(isdeleting) return <Loader />
 
   return (
     <motion.main
@@ -82,7 +90,7 @@ export default function Dashboard() {
 
       {/* CONTENT */}
       <section className="mt-6">
-        {isvideosloading ? (
+        {isvideosloading || !hasloaded  ? (
           /* 🔄 LOADING */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 6 }).map((_, i) => (

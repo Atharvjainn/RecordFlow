@@ -44,7 +44,10 @@ export const useVideoStore = create<VideoStore>((set,get) =>({
         } catch (error) {
             console.log("error in fetching videos",error);
         } finally {
-            set({isvideosloading : false})
+            set({
+                isvideosloading : false,
+                
+            })
         }
     },
 
@@ -57,7 +60,10 @@ export const useVideoStore = create<VideoStore>((set,get) =>({
         } catch (error) {
             console.log("error in fetching all the videos",error);
         } finally {
-            set({isvideosloading : true})
+            set({
+                isvideosloading : false,
+               
+            })
         }
     },
 

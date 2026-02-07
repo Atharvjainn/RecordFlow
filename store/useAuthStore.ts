@@ -82,7 +82,10 @@ export const useAuthStore = create<AuthStore>((set,get) => ({
             console.log("Error in signup store...")
             toast.error("Cannot Logout...")
         } finally{
-            set({isCheckingAuth : false})
+            set({
+                isCheckingAuth : false,
+                hasCheckedAuth : true
+            })
         }
     },
 

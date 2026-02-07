@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuthStore } from "@/store/useAuthStore";
+import { useUiStore } from "@/store/useUiStore";
 import { motion } from "framer-motion";
 import {
   Camera,
@@ -14,10 +15,15 @@ import {
   Play,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect } from "react";
-import Loader from "./Loader";
+
 
 export default function LandingPage() {
+  const {authUser} = useAuthStore()
+  const {open} = useUiStore()
+
+  const getstarted = () => {
+    if(!authUser) open('Auth')
+  }
   
   return (
     <div className="min-h-screen bg-[#fbf7ef]">
@@ -48,17 +54,14 @@ export default function LandingPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/dashboard">
-                <button className="h-14 px-8 rounded-2xl bg-black text-white text-lg font-semibold flex items-center gap-2 hover:bg-black/90 transition">
+              <Link href={`${authUser ? "/dashboard" : "/"}`}>
+                <button className="h-14 px-8 rounded-2xl bg-black text-white text-lg font-semibold flex items-center gap-2  transition hover:scale-103 duration-400 cursor-pointer hover:bg-black/81" onClick={() => getstarted()}>
                   Get Started for Free
                   <ChevronRight className="h-5 w-5" />
                 </button>
               </Link>
 
-              <button className="h-14 px-8 rounded-2xl border border-black/20 bg-white/60 text-lg font-medium flex items-center gap-2 hover:bg-white transition">
-                Watch Demo
-                <Play className="h-5 w-5 fill-current" />
-              </button>
+              
             </div>
           </motion.div>
 
@@ -112,10 +115,10 @@ export default function LandingPage() {
             ].map((f, i) => (
               <div
                 key={i}
-                className="rounded-3xl border p-8 hover:shadow-lg transition bg-white"
+                className="rounded-3xl border p-8 hover:shadow-lg transition bg-white hover:scale-98 group"
               >
-                <div className="h-12 w-12 rounded-2xl bg-black/5 flex items-center justify-center mb-6">
-                  <f.icon className="h-6 w-6 text-red-600" />
+                <div className="h-12 w-12 rounded-2xl bg-black/5 flex items-center justify-center mb-6 group-hover:scale-106">
+                  <f.icon className="h-6 w-6 text-red-600 " />
                 </div>
                 <h3 className="text-xl font-semibold mb-3">{f.title}</h3>
                 <p className="text-sm text-slate-500">{f.desc}</p>
@@ -147,8 +150,8 @@ export default function LandingPage() {
               ))}
             </div>
 
-            <Link href="/dashboard">
-              <button className="mt-12 h-14 px-8 rounded-2xl bg-black text-white text-lg font-semibold hover:bg-black/90 transition">
+            <Link href={`${authUser ? "/dashboard" : "/"}`}>
+              <button className="mt-12 h-14 px-8 rounded-2xl bg-black text-white text-lg font-semibold hover:bg-black/81 transition cursor-pointer hover:scale-103 duration-400 " onClick={() => getstarted()}>
                 Start Recording Today
               </button>
             </Link>

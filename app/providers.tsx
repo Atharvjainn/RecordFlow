@@ -30,7 +30,7 @@ export default function Providers({
       <RecordingModal />
       <UploadVideoModal />
       <RecorderControls />
-      <div className="mt-20">
+      <div className="mt-18  min-h-screen">
         {children}
       </div>
       

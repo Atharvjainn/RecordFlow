@@ -1,173 +1,165 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import {  VideoWithUser } from '@/lib/types'
-import { useAuthStore } from '@/store/useAuthStore'
-import { copylink } from '@/lib/utils'
-import { useRouter } from 'next/navigation'
-import { updateVideoById } from '@/lib/prisma/video'
-import { useVideoStore } from '@/store/useVideoStore'
-import Link from 'next/link'
-
-const TABS = ['Transcript', 'Metadata', 'Viewers', 'Chapters'] as const
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Eye, Trash2, Link as LinkIcon } from "lucide-react";
+import { VideoWithUser } from "@/lib/types";
+import { useAuthStore } from "@/store/useAuthStore";
+import { copylink } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import { updateVideoById } from "@/lib/prisma/video";
+import { useVideoStore } from "@/store/useVideoStore";
+import Link from "next/link";
 
 type VideoPageProps = {
-  video: VideoWithUser
-  videoUrl: string
-}
+  video: VideoWithUser;
+  videoUrl: string;
+};
 
-const VideoPage = ({ video, videoUrl  }: VideoPageProps) => {
-  
-  const { authUser } = useAuthStore()
-  const {deletevideo,isdeleting} = useVideoStore()
-  const uploaderuser = video.user
-  console.log(uploaderuser?.image)
-
+export default function VideoPage({ video, videoUrl }: VideoPageProps) {
+  const { authUser } = useAuthStore();
+  const { deletevideo } = useVideoStore();
+  const uploader = video.user;
+  const router = useRouter();
 
   const [visibility, setVisibility] =
-    useState<'public' | 'private'>(video.visibility)
+    useState<"public" | "private">(video.visibility);
+  const [showVisibility, setShowVisibility] = useState(false);
 
-  const [showVisibility, setShowVisibility] = useState(false)
-  const router = useRouter()
+  const deleteVideo = async () => {
+     deletevideo(video.videoId);
+    router.push("/dashboard");
+  };
 
-  const deleteVideo = async() => {
-     deletevideo(video.videoId)
-    router.push('/dashboard')
-  }
-
-  const visibilityhandler = async(next : "public" | "private") => {
-      await updateVideoById(video.videoId,next)
-  }
+  const visibilityHandler = async (next: "public" | "private") => {
+    setVisibility(next);
+    await updateVideoById(video.videoId, next);
+  };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
-
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="max-w-7xl mx-auto px-6 py-6 space-y-8"
+    >
       {/* HEADER */}
-      <div className="flex justify-between items-start">
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+        {/* LEFT */}
         <div className="space-y-3">
-          <h1 className="text-2xl font-semibold text-gray-900">
+          <h1 className="text-2xl font-semibold text-black">
             {video.title}
           </h1>
 
-          <div className="flex items-center gap-3 text-sm text-gray-500">
-            <Link href={`/users/${uploaderuser.id}`} className='flex items-center gap-2'>
-            <img
-              src={uploaderuser?.image as string}
-              alt={uploaderuser?.name ?? 'User'}
-              className="w-8 h-8 rounded-full"
-              referrerPolicy="no-referrer"
-            />
-            <span className="font-medium text-gray-700">
-              {uploaderuser?.name ?? 'Unknown user'}
-            </span>
+          <div className="flex items-center gap-3 text-sm text-slate-500">
+            <Link
+              href={`/users/${uploader.id}`}
+              className="flex items-center gap-2 hover:opacity-90 transition"
+            >
+              <img
+                src={uploader?.image as string}
+                alt={uploader?.name ?? "User"}
+                className="w-9 h-9 rounded-full ring-1 ring-black/10"
+                referrerPolicy="no-referrer"
+              />
+              <span className="font-medium text-black">
+                {uploader?.name ?? "Unknown user"}
+              </span>
             </Link>
           </div>
 
-          <p className="text-gray-600 max-w-3xl">
-            {video.description}
-          </p>
+          {video.description && (
+            <p className="text-slate-600 max-w-3xl">
+              {video.description}
+            </p>
+          )}
         </div>
 
         {/* ACTIONS */}
-        <div className="flex items-center gap-3">
-          <button className="px-3 py-2 rounded-md border text-sm text-gray-600 hover:bg-gray-50"
+        <div className="flex items-center gap-2">
+          <button
             onClick={copylink}
+            className="flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-medium hover:bg-black/5 transition"
           >
+            <LinkIcon size={14} />
             Copy link
           </button>
 
-          {authUser?.id===uploaderuser.id &&
-          <>
-          <button className="px-3 py-2 rounded-md border text-sm text-red-500 hover:bg-red-50"
-            onClick={deleteVideo}
-          >
-            Delete video
-          </button>
-
-          <div className="relative">
-            <button
-              onClick={() => setShowVisibility(prev => !prev)}
-              className="px-3 py-2 rounded-md border text-sm flex items-center gap-2 cursor-pointer"
-            >
-              👁 {visibility.charAt(0).toUpperCase() + visibility.slice(1)}
-            </button>
-
-            {showVisibility && (
-              <div className="absolute right-0 mt-2 w-32 rounded-md border bg-white shadow-lg z-10">
-                {['public', 'private'].map(option => (
-                  <button
-                    key={option}
-                    onClick={async() => {
-                       const next = option as 'public' | 'private'
-                      setVisibility(next)
-                      await visibilityhandler(next)
-                      setShowVisibility(false)
-                    }}
-                    className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-100 ${
-                      (visibility) === option
-                        ? 'text-pink-600 font-medium'
-                        : 'text-gray-700'
-                    }`}
-                  >
-                    {option.charAt(0).toUpperCase() + option.slice(1)}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-          </>
-          
-          }
-
-        
-          
-        </div>
-      </div>
-
-      {/* MAIN CONTENT */}
-      <div >
-
-        {/* VIDEO */}
-        <div className="rounded-xl overflow-hidden bg-black">
-          <video
-            src={videoUrl}
-            controls
-            autoPlay
-            muted
-            playsInline
-            preload="metadata"
-            className="w-full h-full object-contain"
-          />
-        </div>
-
-        {/* RIGHT PANEL */}
-        {/* <div className="rounded-xl border bg-white flex flex-col h-130"> */}
-
-          {/* TABS */}
-          {/* <div className="flex border-b">
-            {TABS.map(tab => (
+          {authUser?.id === uploader.id && (
+            <>
               <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`flex-1 py-3 text-sm font-medium transition ${
-                  activeTab === tab
-                    ? 'text-pink-600 border-b-2 border-pink-500'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
+                onClick={deleteVideo}
+                className="flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-100 transition"
               >
-                {tab}
+                <Trash2 size={14} />
+                Delete
               </button>
-            ))}
-          </div> */}
 
-          {/* TAB CONTENT */}
-          {/* <div className="flex-1 overflow-y-auto p-4 text-sm text-gray-500">
-            {activeTab} content goes here
-          </div> */}
-        {/* </div> */}
+              {/* VISIBILITY */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowVisibility((v) => !v)}
+                  className="flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-medium hover:bg-black/5 transition"
+                >
+                  <Eye size={14} />
+                  {visibility.charAt(0).toUpperCase() +
+                    visibility.slice(1)}
+                </button>
+
+                <AnimatePresence>
+                  {showVisibility && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 mt-2 w-36 rounded-xl border bg-white shadow-lg z-20 overflow-hidden"
+                    >
+                      {(["public", "private"] as const).map(
+                        (option) => (
+                          <button
+                            key={option}
+                            onClick={() => {
+                              visibilityHandler(option);
+                              setShowVisibility(false);
+                            }}
+                            className={`w-full px-4 py-2 text-left text-sm transition ${
+                              visibility === option
+                                ? "bg-black text-white"
+                                : "text-slate-700 hover:bg-black/5"
+                            }`}
+                          >
+                            {option.charAt(0).toUpperCase() +
+                              option.slice(1)}
+                          </button>
+                        )
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </>
+          )}
+        </div>
       </div>
-    </div>
-  )
-}
 
-export default VideoPage
+      {/* VIDEO PLAYER */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.35, ease: "easeOut" }}
+        className="rounded-3xl overflow-hidden bg-black shadow-xl"
+      >
+        <video
+          src={videoUrl}
+          controls
+          autoPlay
+          muted
+          playsInline
+          preload="metadata"
+          className="w-full h-full object-contain"
+        />
+      </motion.div>
+    </motion.div>
+  );
+}
