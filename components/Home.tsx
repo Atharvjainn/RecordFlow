@@ -129,55 +129,7 @@ export default function LandingPage() {
       </section>
 
       {/* ================= SOCIAL PROOF ================= */}
-      <section className="py-32 px-6">
-        <div className="mx-auto max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
-          <div>
-            <h2 className="text-3xl md:text-5xl font-bold mb-8">
-              Join 10,000+ creators shipping daily.
-            </h2>
-
-            <div className="space-y-6">
-              {[
-                "Zero setup required, record from your browser.",
-                "Cloud storage included.",
-                "Privacy first: your recordings, your rules.",
-                "Custom branding on share pages.",
-              ].map((text, i) => (
-                <div key={i} className="flex items-center gap-4">
-                  <CheckCircle2 className="h-5 w-5 text-red-600" />
-                  <p className="font-medium">{text}</p>
-                </div>
-              ))}
-            </div>
-
-            <Link href={`${authUser ? "/dashboard" : "/"}`}>
-              <button className="mt-12 h-14 px-8 rounded-2xl bg-black text-white text-lg font-semibold hover:bg-black/81 transition cursor-pointer hover:scale-103 duration-400 " onClick={() => getstarted()}>
-                Start Recording Today
-              </button>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { icon: Shield, label: "99.9%", sub: "Uptime SLA" },
-              { icon: Users, label: "10k+", sub: "Active Users" },
-              { icon: Zap, label: "0ms", sub: "Latency" },
-              { icon: Video, label: "1M+", sub: "Clips Captured" },
-            ].map((stat, i) => (
-              <div
-                key={i}
-                className={`rounded-3xl border bg-white p-6 text-center ${
-                  i % 2 === 1 ? "mt-8" : ""
-                }`}
-              >
-                <stat.icon className="h-10 w-10 text-red-600 mx-auto mb-4" />
-                <div className="text-2xl font-bold">{stat.label}</div>
-                <div className="text-xs text-slate-500">{stat.sub}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      
 
     </div>
   );

@@ -28,7 +28,8 @@ export default function Navbar() {
   }
 
   useEffect(() => {
-    checkauth();
+    if(!authUser) checkauth();
+    
   }, [checkauth]);
 
   useEffect(() => {
@@ -82,7 +83,7 @@ export default function Navbar() {
               {!authUser && (
                 <button
                   onClick={() => open("Auth")}
-                  className="rounded-full bg-black px-6 py-2 text-sm font-semibold text-white hover:bg-black/90 transition"
+                  className="rounded-full bg-black px-6 py-2 text-sm font-semibold text-white hover:bg-black/90 transition cursor-pointer"
                 >
                   SIGN IN
                 </button>

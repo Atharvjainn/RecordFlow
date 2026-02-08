@@ -10,7 +10,6 @@ import { useRouter } from "next/navigation";
 import { updateVideoById } from "@/lib/prisma/video";
 import { useVideoStore } from "@/store/useVideoStore";
 import Link from "next/link";
-import CloudinaryVideoPlayer from "@/components/CloudinaryVideoPlayer";
 
 type VideoPageProps = {
   video: VideoWithUser;
@@ -152,13 +151,13 @@ export default function VideoPage({ video, videoUrl }: VideoPageProps) {
         className="rounded-3xl overflow-hidden bg-black shadow-2xl"
       >
         <video
-          src={videoUrl}
+          src={video.videoUrl}
           controls
           playsInline
           preload="metadata"
           className="w-full h-full object-contain"
         />
-        {/* <CloudinaryVideoPlayer publicId={video.publicId} /> */}
+        
       </motion.div>
     </motion.div>
   );

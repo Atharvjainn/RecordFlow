@@ -73,7 +73,7 @@ export default function AuthModal() {
           <h2 className="text-lg font-semibold">Welcome back</h2>
           <button
             onClick={close}
-            className="rounded-full p-1 hover:bg-black/5"
+            className="rounded-full p-1 hover:bg-black/5 cursor-pointer"
           >
             <X size={18} />
           </button>
@@ -83,7 +83,7 @@ export default function AuthModal() {
         <div className="mt-4 flex rounded-full bg-black/5 p-1">
           <button
             onClick={() => setMode("login")}
-            className={`flex-1 rounded-full py-2 text-sm font-medium transition ${
+            className={`flex-1 rounded-full py-2 text-sm font-medium transition cursor-pointer ${
               mode === "login"
                 ? "bg-white shadow"
                 : "text-slate-500"
@@ -93,7 +93,7 @@ export default function AuthModal() {
           </button>
           <button
             onClick={() => setMode("signup")}
-            className={`flex-1 rounded-full py-2 text-sm font-medium transition ${
+            className={`flex-1 rounded-full py-2 text-sm font-medium transition cursor-pointer ${
               mode === "signup"
                 ? "bg-white shadow"
                 : "text-slate-500"
@@ -106,11 +106,11 @@ export default function AuthModal() {
         {/* BODY */}
         <div className="mt-6 space-y-4">
           {/* OAUTH */}
-          <button onClick={() => providerLogin('google')} className="w-full rounded-xl bg-black py-3 text-sm font-semibold text-white hover:bg-black/90">
+          <button onClick={() => providerLogin('google')} className="w-full rounded-xl bg-black py-3 text-sm font-semibold text-white hover:bg-black/90 cursor-pointer">
             Continue with Google
           </button>
 
-          <button onClick={() => providerLogin('github')} className="w-full rounded-xl bg-red-600 py-3 text-sm font-semibold text-white hover:bg-red-700">
+          <button onClick={() => providerLogin('github')} className="w-full rounded-xl bg-red-600 py-3 text-sm font-semibold text-white hover:bg-red-700 cursor-pointer">
             Continue with GitHub
           </button>
 
@@ -148,7 +148,7 @@ export default function AuthModal() {
             {/* SUBMIT */}
             <button
             onClick={() => buttonhandler()}
-            className="mt-2 w-full rounded-xl bg-gradient-to-r from-black to-red-600 py-3 text-sm font-semibold text-white shadow-lg transition
+            className="mt-2 w-full rounded-xl bg-gradient-to-r from-black to-red-600 py-3 text-sm font-semibold text-white shadow-lg transition cursor-pointer
                         hover:from-black hover:to-red-700
                         active:scale-[0.98]"
             >
@@ -164,7 +164,7 @@ export default function AuthModal() {
             onClick={() =>
               setMode(mode === "login" ? "signup" : "login")
             }
-            className="text-sm underline"
+            className="text-sm underline cursor-pointer"
           >
             {mode === "login"
               ? "Need an account?"
@@ -173,7 +173,7 @@ export default function AuthModal() {
 
           <button
             onClick={close}
-            className="rounded-full border bg-white px-4 py-2 text-sm hover:bg-black/5"
+            className="rounded-full border bg-white px-4 py-2 text-sm hover:bg-black/5 cursor-pointer"
           >
             Close
           </button>

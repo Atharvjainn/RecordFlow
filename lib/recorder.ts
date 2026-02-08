@@ -61,11 +61,10 @@ export async function startRecording(options: {
   }
 
   activeStream = stream;
-  const previewCleanup = attachPreview(stream);
+  
 
     const previousCleanup = cleanupVideos;
     cleanupVideos = () => {
-      previewCleanup();
       previousCleanup?.();
     }
 
@@ -212,18 +211,4 @@ async function combineStreams(
   return canvasStream;
 }
 
-function attachPreview(stream: MediaStream) {
-  const video = document.createElement("video");
-  video.srcObject = stream;
-  video.muted = true;
-  video.autoplay = true;
-  video.playsInline = true;
-  video.style.position = "fixed";
-  video.style.bottom = "20px";
-  video.style.right = "20px";
-  video.style.width = "320px";
-  video.style.zIndex = "9999";
-  document.body.appendChild(video);
 
-  return () => video.remove();
-}

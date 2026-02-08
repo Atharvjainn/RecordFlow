@@ -81,13 +81,13 @@ export default function FancyFooter() {
 
             <div className="flex gap-8">
               {["Privacy", "Terms", "Licensing"].map((item) => (
-                <a
+                <div
                   key={item}
-                  href="#"
+                  
                   className="text-xs font-semibold uppercase tracking-widest text-white/40 transition hover:text-red-600"
                 >
                   {item}
-                </a>
+                </div>
               ))}
             </div>
           </div>
