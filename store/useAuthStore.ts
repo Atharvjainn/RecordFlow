@@ -28,7 +28,7 @@ export const useAuthStore = create<AuthStore>((set,get) => ({
         try {
             const user = await getcurrentUser()
             set({authUser : user})
-            toast.success("Signed In")
+            if(user) toast.success("Signed In")
         } catch (error) {
             console.log("Error in signup store...")
         } finally {
