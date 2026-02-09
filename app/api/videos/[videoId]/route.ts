@@ -2,7 +2,7 @@ import { deleteFromCloudinary } from "@/lib/cloudinary/delete";
 import { deleteVideoById } from "@/lib/prisma/video";
 
 
-export async function DELETE(req : Request,{params} : {params : {videoId : string}}) {
+export async function DELETE(req : Request,{params} : {params : Promise<{videoId : string}>}) {
     try {
         
         const {videoId} = await params;
