@@ -16,6 +16,13 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  const handleSignOut = async () => {
+    setMenuOpen(false);
+    await signOut();
+    await new Promise(resolve => setTimeout(resolve, 100));
+    router.push("/");
+};
+
   const scrolltovideos = () => {
     const element = document.getElementById('videos')
     if(element){
@@ -128,11 +135,7 @@ export default function Navbar() {
                       </Link>
 
                       <button
-                        onClick={() => {
-                          signOut();
-                          setMenuOpen(false);
-                          router.push("/");
-                        }}
+                        onClick={handleSignOut}
                         className="flex w-full items-center gap-3 px-4 py-3 text-sm hover:bg-black/5 cursor-pointer"
                       >
                         <LogOut size={16} />
